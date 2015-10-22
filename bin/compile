@@ -14,7 +14,7 @@ cd "$1/node_modules/yo-dolan"
 ./node_modules/grunt-cli/bin/grunt --debug --verbose generate --dolan="../../config/dolan_cache.json" --target="../../tmp/cache"
 popd
 
-bundle exec ruby -e "
+ruby -e "
   require 'json'
   require './lib/packager/workspace_additions/bower_installer'
   require './lib/env'
