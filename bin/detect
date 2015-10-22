@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir>
+
+if [ -s "$1/config/dolan_cache.json" ]; then
+  echo "Packager Cache"
+  exit 0
+else
+  exit 1
+fi
