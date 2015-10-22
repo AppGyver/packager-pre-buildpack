@@ -24,7 +24,7 @@ bundle exec ruby -e "
 pushd .
 cd "$1/tmp/cache/base_project"
 npm install
-bower update
+../../../node_modules/steroids/node_modules/bower/bin/bower update
 popd
 
 exit 0
