@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir> <env-dir>
 
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
 indent() {
   sed -u 's/^/       /'
 }
@@ -19,28 +23,26 @@ export_env_dir() {
 
 echo "-----> Found a dolan_cache.json"
 
-rm -fr "$1/tmp/cache/base_project"
-export_env_dir $3
+export_env_dir $ENV_DIR
 
-pushd .
-cd "$1/node_modules/yo-dolan"
-./node_modules/grunt-cli/bin/grunt --debug --verbose generate --dolan="../../config/dolan_cache.json" --target="../../tmp/cache"
-popd
+YO_DOLAN_DIR="$BUILD_DIR/node_modules/yo-dolan"
+YO_DOLAN_GRUNT="$YO_DOLAN_DIR/node_modules/grunt-cli/bin/grunt"
+STEROIDS_DIR="$BUILD_DIR/node_modules/steroids"
+STEROIDS_BOWER="$STEROIDS_DIR/node_modules/bower/bin/bower"
 
-pushd .
-cd $1
+$YO_DOLAN_GRUNT --debug --verbose generate --dolan="$BUILD_DIR/config/dolan_cache.json" --target="$BUILD_DIR/tmp/cache" --gruntfile="$YO_DOLAN_DIR/Gruntfile.coffee"
+
 bundle exec ruby -e "
   require 'json'
-  require './lib/packager/workspace_additions/bower_installer'
-  require './lib/env'
-  Packager::WorkspaceAdditions::BowerInstaller.new('./tmp/cache/base_project/bower.json').install(Env::BOWER_DEPENDENCIES)
+  require '$BUILD_DIR/lib/packager/workspace_additions/bower_installer'
+  require '$BUILD_DIR/lib/env'
+  Packager::WorkspaceAdditions::BowerInstaller.new('$BUILD_DIR/tmp/cache/base_project/bower.json').install(Env::BOWER_DEPENDENCIES)
 "
-popd
 
 pushd .
-cd "$1/tmp/cache/base_project"
+cd "$BUILD_DIR/tmp/cache/base_project"
 npm install
-../../../node_modules/steroids/node_modules/bower/bin/bower update
+$STEROIDS_BOWER update
 popd
 
 exit 0
