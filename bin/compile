@@ -32,12 +32,15 @@ STEROIDS_BOWER="$STEROIDS_DIR/node_modules/bower/bin/bower"
 
 $YO_DOLAN_GRUNT --debug --verbose generate --dolan="$BUILD_DIR/config/dolan_cache.json" --target="$BUILD_DIR/tmp/cache" --gruntfile="$YO_DOLAN_DIR/Gruntfile.coffee"
 
+pushd .
+cd $BUILD_DIR
 bundle exec ruby -e "
   require 'json'
-  require '$BUILD_DIR/lib/packager/workspace_additions/bower_installer'
-  require '$BUILD_DIR/lib/env'
-  Packager::WorkspaceAdditions::BowerInstaller.new('$BUILD_DIR/tmp/cache/base_project/bower.json').install(Env::BOWER_DEPENDENCIES)
+  require './lib/packager/workspace_additions/bower_installer'
+  require './lib/env'
+  Packager::WorkspaceAdditions::BowerInstaller.new('./tmp/cache/base_project/bower.json').install(Env::BOWER_DEPENDENCIES)
 "
+popd
 
 pushd .
 cd "$BUILD_DIR/tmp/cache/base_project"
